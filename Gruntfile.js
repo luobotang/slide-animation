@@ -4,18 +4,18 @@ module.exports = function (grunt) {
 		browserify: {
 			options: {
 				alias: {
-					'jquery': './lib/jquery.min.js'
+					'jquery': './jquery.js'
 				}
 			},
-			1: {
-				src: '1/index.js',
-				dest: '1/index.bundle.js'
+			test: {
+				src: 'test/index.js',
+				dest: 'test/index.bundle.js'
 			}
 		},
 		less: {
-			1: {
-				src: '1/index.less',
-				dest: '1/index.css'
+			test: {
+				src: 'test/index.less',
+				dest: 'test/index.css'
 			}
 		}
 	})
