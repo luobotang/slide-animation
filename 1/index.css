@@ -3,6 +3,10 @@
   margin: 0;
   padding: 0;
 }
+h1 {
+  text-align: center;
+  font: 100px/300px arial, "Microsoft Yahei";
+}
 p {
   text-align: center;
   font: 32px/200px arial, "Microsoft Yahei";
@@ -38,22 +42,58 @@ p {
 }
 .slide-nav-bar {
   position: absolute;
-  width: 20px;
-  top: 30px;
+  top: 50%;
   right: 30px;
+  margin-top: -100px;
   z-index: 3;
   list-style: none;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.5);
+  padding: 5px;
   border-radius: 20px;
 }
 .slide-nav {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   margin-bottom: 10px;
-  background-color: #ccc;
+  background-color: #eee;
 }
 .slide-nav-active {
-  background-color: red;
+  background-color: #888;
+}
+.box {
+  transition: all 1s;
+}
+.box1 {
+  position: absolute;
+  top: 300px;
+  left: -300px;
+  width: 300px;
+  height: 200px;
+  background: yellow;
+}
+.slide-active .box1 {
+  left: 0;
+}
+.box2 {
+  position: absolute;
+  top: 300px;
+  right: -300px;
+  width: 300px;
+  height: 200px;
+  background: cyan;
+}
+.slide-active .box2 {
+  right: 0;
+}
+.box3 {
+  position: absolute;
+  bottom: -400px;
+  left: 50%;
+  width: 600px;
+  height: 400px;
+  margin-left: -300px;
+  background: red;
+}
+.slide-active .box3 {
+  bottom: 0;
 }
