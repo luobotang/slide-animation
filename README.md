@@ -13,12 +13,13 @@
 ## 使用方法
 
 ```javascript
-var $ = require('jquery')
 var Slider = require('luobo-slider')
-new Slider()
+new Slider({
+    container: '#slider-container'
+})
 ```
 
 ## 依赖
 
-依赖 jQuery
-依赖 jquery-mousewheel
+- jQuery
+- jquery-mousewheel
