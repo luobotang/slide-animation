@@ -1,0 +1,24 @@
+{
+  "name": "slide-animation",
+  "version": "0.1.0",
+  "description": "JavaScript + CSS animation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luobotang/slide-animation.git"
+  },
+  "author": "luobotang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luobotang/slide-animation/issues"
+  },
+  "homepage": "https://github.com/luobotang/slide-animation#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.1",
+    "grunt-contrib-less": "^1.0.1"
+  }
+}
