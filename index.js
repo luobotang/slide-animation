@@ -23,8 +23,8 @@ var defaults = {
 
 	classSlideIn: 'slide-in',
 	classSlideOut: 'slide-out',
-	classSlideUp: 'slide-up',
-	classSlideDown: 'slide-down',
+	classSlidePrev: 'slide-up',
+	classSlideNext: 'slide-down',
 	classSlideActive: 'slide-active',
 
 	classSlideNavBar: 'slide-nav-bar',
@@ -38,9 +38,9 @@ function Slider(options) {
 	var slides = this.slides = this.$el.children(opts.slide)
 
 	var active = this.active = opts.active
-	slides.slice(0, active).addClass(opts.classSlideUp)
+	slides.slice(0, active).addClass(opts.classSlidePrev)
 	slides.eq(active).addClass(opts.classSlideActive)
-	slides.slice(active + 1).addClass(opts.classSlideDown)
+	slides.slice(active + 1).addClass(opts.classSlideNext)
 
 	if (opts.scrollNav) this.enableScrollNav()
 	if (opts.keyNav) this.enableKeyNav()
@@ -91,18 +91,18 @@ Slider.prototype.nav = function (isUp) {
 
 	var classSlideIn = opts.classSlideIn
 	var classSlideOut = opts.classSlideOut
-	var classSlideUp = opts.classSlideUp
-	var classSlideDown = opts.classSlideDown
+	var classSlidePrev = opts.classSlidePrev
+	var classSlideNext = opts.classSlideNext
 	var classSlideActive = opts.classSlideActive
 	var classSlideNavActive = opts.classSlideNavActive
 
 	currentSlide
 		.addClass(classSlideOut)
-		.addClass(isUp ? classSlideDown : classSlideUp)
+		.addClass(isUp ? classSlideNext : classSlidePrev)
 		.removeClass(classSlideActive)
 	nextSlide
 		.addClass(classSlideIn)
-		.removeClass(isUp ? classSlideUp : classSlideDown)
+		.removeClass(isUp ? classSlidePrev : classSlideNext)
 		.addClass(classSlideActive)
 
 	setTimeout(function () {
