@@ -55,15 +55,17 @@ Slider.prototype.enableScrollNav = function () {
 	})
 }
 
+var KEY_LEFT = 37
 var KEY_UP = 38
+var KEY_RIGHT = 39
 var KEY_DOWN = 40
 
 Slider.prototype.enableKeyNav = function () {
 	var self = this
 	$(document).keydown(function (e) {
-		if (e.which === KEY_UP) {
+		if (e.which === KEY_UP || e.which === KEY_LEFT) {
 			self.nav(true)
-		} else if (e.which === KEY_DOWN) {
+		} else if (e.which === KEY_DOWN || e.which === KEY_RIGHT) {
 			self.nav(false)
 		}
 	})
