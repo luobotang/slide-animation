@@ -6,9 +6,11 @@
 
 一张幻灯片页面经历的状态包括：
 
-- slide-in
-- slide-active
-- slide-out
+- slide-down：在当前显示幻灯片后面
+- slide-in：进入
+- slide-active：显示
+- slide-out：退出
+- slide-up：在当前显示幻灯片前面
 
 ## 使用方法
 
