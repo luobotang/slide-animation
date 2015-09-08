@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SliderPlayer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="slider-container">
+	<div class="slide">
+		<h1>Hello, world!</h1>
+	</div>
+	<div class="slide">
+		<ul>
+			<li>A</li>
+			<li>B</li>
+			<li>C</li>
+			<li>D</li>
+		</ul>
+	</div>
+	<div class="slide">
+		<pre>
+<code>
+new Slider({
+    container: '#slider-container',
+    slideTime: 500,
+    navBar: false,
+    classSlideUp: 'slide-left',
+    classSlideDown: 'slide-right'
+})
+</code>
+		</pre>
+	</div>
+	<div class="slide">
+		
+	</div>
+	<div class="slide">
+		
+	</div>
+</div>
+<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../../node_modules/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script src="../../index.js"></script>
+<script>
+new Slider({
+    container: '#slider-container',
+    slideTime: 500,
+    navBar: false,
+    classSlideUp: 'slide-left',
+    classSlideDown: 'slide-right'
+})
+</script>
+</body>
+</html>
