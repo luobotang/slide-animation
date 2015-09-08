@@ -1,5 +1,16 @@
-var $ = require('jquery')
-require('jquery-mousewheel')($)
+(function (factory) {
+	
+	if (typeof exports !== 'undefined') {
+		var $ = require('jquery')
+		require('jquery-mousewheel')($)
+		module.exports = factory($)
+	} else if (window.jQuery && window.jQuery.fn.mousewheel) {
+		window.Slider = factory(window.jQuery)
+	} else {
+		throw new Error('require jQuery, jQuery-mousewheel')
+	}
+
+})(function ($) {
 
 var defaults = {
 	container: '.slide-container',
@@ -116,4 +127,5 @@ Slider.prototype.enableNavBar = function () {
 	navs.eq(this.active).addClass(opts.classSlideNavActive)
 }
 
-module.exports = Slider
+return Slider
+})
