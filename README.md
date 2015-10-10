@@ -43,6 +43,8 @@ options 及缺省值：
 - classSlideNavBar: 'slide-nav-bar'
 - classSlideNav: 'slide-nav'
 - classSlideNavActive: 'slide-nav-active'
+- autoNav: false
+- autoNavInterval: 5000
 
 **prev()**
 

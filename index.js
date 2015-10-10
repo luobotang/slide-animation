@@ -29,7 +29,10 @@ var defaults = {
 
 	classSlideNavBar: 'slide-nav-bar',
 	classSlideNav: 'slide-nav',
-	classSlideNavActive: 'slide-nav-active'
+	classSlideNavActive: 'slide-nav-active',
+
+	autoNav: false,
+	autoNavInterval: 5000
 }
 
 function Slider(options) {
@@ -61,6 +64,8 @@ function Slider(options) {
 	if (opts.scrollNav) this.enableScrollNav()
 	if (opts.keyNav) this.enableKeyNav()
 	if (opts.navBar) this.enableNavBar()
+
+	if (opts.autoNav) this.startAutoNav()
 }
 
 Slider.prototype.prev = function () {
@@ -175,6 +180,19 @@ Slider.prototype.enableNavBar = function () {
 		var index = e.currentTarget.getAttribute('data-index')
 		self.nav(parseInt(index, 10))
 	})
+}
+
+Slider.prototype.startAutoNav = function () {
+	if (this.autoNavTimer) return
+	var interval = Math.max(this.opts.autoNavInterval, this.opts.slideTime)
+	var self = this
+	autoNavTimer = setInterval(function () {
+		self.nav(self.active + 1 >= self.total ? 0 : self.active + 1)
+	}, interval)
+}
+
+Slider.prototype.stopAutoNav = function () {
+	if (this.autoNavTimer) clearInterval(this.autoNavTimer)
 }
 
 return Slider
