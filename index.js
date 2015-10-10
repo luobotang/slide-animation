@@ -67,7 +67,11 @@ Slider.prototype.enableScrollNav = function () {
 	var self = this
 	this.$el.mousewheel(function (e) {
 		var isUp = e.deltaY > 0
-		self.nav(isUp)
+		if (isUp) {
+			self.prev()
+		} else {
+			self.next()
+		}
 	})
 }
 
@@ -80,26 +84,38 @@ Slider.prototype.enableKeyNav = function () {
 	var self = this
 	$(document).keydown(function (e) {
 		if (e.which === KEY_UP || e.which === KEY_LEFT) {
-			self.nav(true)
+			self.prev()
 		} else if (e.which === KEY_DOWN || e.which === KEY_RIGHT) {
-			self.nav(false)
+			self.next()
 		}
 	})
 }
 
-Slider.prototype.nav = function (isUp) {
+Slider.prototype.prev = function () {
+	this.nav(this.active - 1)
+}
+
+Slider.prototype.next = function () {
+	this.nav(this.active + 1)
+}
+
+Slider.prototype.nav = function (next) {
+	if (this.sliding ||
+		typeof next !== 'number' ||
+		next < 0 || next === this.active || next >= this.total) {
+		return
+	}
+
 	var opts = this.opts
 	var self = this
 	var slideTime = this.opts.slideTime
 
-	if (self.sliding) return
-
 	var prev = self.active
-	var next = isUp ? prev - 1 : prev + 1
-	if (next < 0) return
-	if (next >= self.slides.length) return
+	var isUp = next < prev
 
+	// prev - between - next
 	var currentSlide = self.slides.eq(prev)
+	var betweenSlides = isUp ? self.slides.slice(next, prev) : self.slides.slice(prev, next)
 	var nextSlide = self.slides.eq(next)
 
 	self.sliding = true
@@ -116,33 +132,44 @@ Slider.prototype.nav = function (isUp) {
 		.addClass(classSlideOut)
 		.addClass(isUp ? classSlideNext : classSlidePrev)
 		.removeClass(classSlideActive)
+	betweenSlides
+		.removeClass(isUp ? classSlidePrev : classSlideNext)
+		.addClass(isUp ? classSlideNext : classSlidePrev)
 	nextSlide
 		.addClass(classSlideIn)
 		.removeClass(isUp ? classSlidePrev : classSlideNext)
 		.addClass(classSlideActive)
 
+	if (self.navs) {
+		self.navs.eq(prev).removeClass(classSlideNavActive)
+		self.navs.eq(next).addClass(classSlideNavActive)
+	}
+
 	setTimeout(function () {
 		self.sliding = false
 		currentSlide.removeClass(classSlideOut)
 		nextSlide.removeClass(classSlideIn)
-
-		self.navs.eq(prev).removeClass(classSlideNavActive)
-		self.navs.eq(next).addClass(classSlideNavActive)
 	}, slideTime)
 }
 
 Slider.prototype.enableNavBar = function () {
 	var opts = this.opts
-	var total = this.slides.length
+	var total = this.total
 	var $bar = $('<ul class="' + opts.classSlideNavBar + '"></ul>')
 	for (var i = 0; i < total; i++) {
-		$bar.append('<li class="' + opts.classSlideNav + '"></li>')
+		$bar.append('<li class="' + opts.classSlideNav + '" data-index=' + i + '></li>')
 	}
 
 	$bar.appendTo(this.$el)
 
 	var navs = this.navs = $bar.find('li')
 	navs.eq(this.active).addClass(opts.classSlideNavActive)
+
+	var self = this
+	$bar.on('click', 'li', function (e) {
+		var index = e.currentTarget.getAttribute('data-index')
+		self.nav(parseInt(index, 10))
+	})
 }
 
 return Slider
