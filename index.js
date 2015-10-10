@@ -63,6 +63,72 @@ function Slider(options) {
 	if (opts.navBar) this.enableNavBar()
 }
 
+Slider.prototype.prev = function () {
+	this.nav(this.active - 1)
+}
+
+Slider.prototype.next = function () {
+	this.nav(this.active + 1)
+}
+
+/*
+ * nav to the 'target' slide with given index
+ * @param {number} target
+ */
+Slider.prototype.nav = function (target) {
+	if (this.sliding ||
+		typeof target !== 'number' ||
+		target < 0 || target === this.active || target >= this.total) {
+		return
+	}
+
+	var opts = this.opts
+	var self = this
+	var slideTime = this.opts.slideTime
+
+	var current = self.active
+	var isUp = target < current
+
+	// current - between - target
+	var currentSlide = self.slides.eq(current)
+	var betweenSlides = isUp ? self.slides.slice(target, current) : self.slides.slice(current, target)
+	var targetSlide = self.slides.eq(target)
+
+	self.sliding = true
+	self.active = target
+
+	var classSlideIn = opts.classSlideIn
+	var classSlideOut = opts.classSlideOut
+	var classSlidePrev = opts.classSlidePrev
+	var classSlideNext = opts.classSlideNext
+	var classSlideActive = opts.classSlideActive
+	var classSlideNavActive = opts.classSlideNavActive
+
+	currentSlide
+		.addClass(classSlideOut)
+		.addClass(isUp ? classSlideNext : classSlidePrev)
+		.removeClass(classSlideActive)
+	betweenSlides
+		.removeClass(isUp ? classSlidePrev : classSlideNext)
+		.addClass(isUp ? classSlideNext : classSlidePrev)
+	targetSlide
+		.addClass(classSlideIn)
+		.removeClass(isUp ? classSlidePrev : classSlideNext)
+		.addClass(classSlideActive)
+
+	if (self.navs) {
+		self.navs.eq(current).removeClass(classSlideNavActive)
+		self.navs.eq(target).addClass(classSlideNavActive)
+	}
+
+	setTimeout(function () {
+		self.sliding = false
+		currentSlide.removeClass(classSlideOut)
+		targetSlide.removeClass(classSlideIn)
+	}, slideTime)
+}
+
+
 Slider.prototype.enableScrollNav = function () {
 	var self = this
 	this.$el.mousewheel(function (e) {
@@ -89,67 +155,6 @@ Slider.prototype.enableKeyNav = function () {
 			self.next()
 		}
 	})
-}
-
-Slider.prototype.prev = function () {
-	this.nav(this.active - 1)
-}
-
-Slider.prototype.next = function () {
-	this.nav(this.active + 1)
-}
-
-Slider.prototype.nav = function (next) {
-	if (this.sliding ||
-		typeof next !== 'number' ||
-		next < 0 || next === this.active || next >= this.total) {
-		return
-	}
-
-	var opts = this.opts
-	var self = this
-	var slideTime = this.opts.slideTime
-
-	var prev = self.active
-	var isUp = next < prev
-
-	// prev - between - next
-	var currentSlide = self.slides.eq(prev)
-	var betweenSlides = isUp ? self.slides.slice(next, prev) : self.slides.slice(prev, next)
-	var nextSlide = self.slides.eq(next)
-
-	self.sliding = true
-	self.active = next
-
-	var classSlideIn = opts.classSlideIn
-	var classSlideOut = opts.classSlideOut
-	var classSlidePrev = opts.classSlidePrev
-	var classSlideNext = opts.classSlideNext
-	var classSlideActive = opts.classSlideActive
-	var classSlideNavActive = opts.classSlideNavActive
-
-	currentSlide
-		.addClass(classSlideOut)
-		.addClass(isUp ? classSlideNext : classSlidePrev)
-		.removeClass(classSlideActive)
-	betweenSlides
-		.removeClass(isUp ? classSlidePrev : classSlideNext)
-		.addClass(isUp ? classSlideNext : classSlidePrev)
-	nextSlide
-		.addClass(classSlideIn)
-		.removeClass(isUp ? classSlidePrev : classSlideNext)
-		.addClass(classSlideActive)
-
-	if (self.navs) {
-		self.navs.eq(prev).removeClass(classSlideNavActive)
-		self.navs.eq(next).addClass(classSlideNavActive)
-	}
-
-	setTimeout(function () {
-		self.sliding = false
-		currentSlide.removeClass(classSlideOut)
-		nextSlide.removeClass(classSlideIn)
-	}, slideTime)
 }
 
 Slider.prototype.enableNavBar = function () {
