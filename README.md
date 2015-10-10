@@ -28,22 +28,20 @@ new Slider({
 构造函数。
 
 options 及缺省值：
-- container: '.slide-container',
-- slide: '.slide',
-- slideTime: 1000,
-- active: 0, // index start from 0
-- scrollNav: true,
-- keyNav: true,
-- navBar: true,
-
-- classSlideIn: 'slide-in',
-- classSlideOut: 'slide-out',
-- classSlidePrev: 'slide-up',
-- classSlideNext: 'slide-down',
-- classSlideActive: 'slide-active',
-
-- classSlideNavBar: 'slide-nav-bar',
-- classSlideNav: 'slide-nav',
+- container: '.slide-container'
+- slide: '.slide'
+- slideTime: 1000
+- active: 0
+- scrollNav: true
+- keyNav: true
+- navBar: true
+- classSlideIn: 'slide-in'
+- classSlideOut: 'slide-out'
+- classSlidePrev: 'slide-up'
+- classSlideNext: 'slide-down'
+- classSlideActive: 'slide-active'
+- classSlideNavBar: 'slide-nav-bar'
+- classSlideNav: 'slide-nav'
 - classSlideNavActive: 'slide-nav-active'
 
 **prev()**
