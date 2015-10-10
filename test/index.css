@@ -19,10 +19,10 @@ p {
 }
 .box1 {
 	position: absolute;
-	top: 300px;
-	left: -300px;
-	width: 300px;
-	height: 200px;
+	top: 40%;
+	left: -30%;
+	width: 30%;
+	height: 30%;
 	background: yellow;
 }
 .slide-active .box1 {
@@ -30,10 +30,10 @@ p {
 }
 .box2 {
 	position: absolute;
-	top: 300px;
-	right: -300px;
-	width: 300px;
-	height: 200px;
+	top: 40%;
+	right: -30%;
+	width: 30%;
+	height: 30%;
 	background: cyan;
 }
 .slide-active .box2 {
@@ -41,11 +41,11 @@ p {
 }
 .box3 {
 	position: absolute;
-	bottom: -400px;
+	bottom: -60%;
 	left: 50%;
-	width: 600px;
-	height: 400px;
-	margin-left: -300px;
+	width: 30%;
+	height: 60%;
+	margin-left: -15%;
 	background: red;
 }
 .slide-active .box3 {
