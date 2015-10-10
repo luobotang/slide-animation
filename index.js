@@ -16,7 +16,7 @@ var defaults = {
 	container: '.slide-container',
 	slide: '.slide',
 	slideTime: 1000,
-	active: 0,
+	active: 0, // index start from 0
 	scrollNav: true,
 	keyNav: true,
 	navBar: true,
@@ -36,12 +36,28 @@ function Slider(options) {
 	var opts = this.opts = $.extend({}, defaults, options)
 	var $el = this.$el = $(opts.container)
 	var slides = this.slides = this.$el.children(opts.slide)
+	var total = this.total = this.slides.length
 
-	var active = this.active = opts.active
+	// no slide
+	if (total === 0) return
+
+	var active = opts.active
+
+	// check active
+	if (active < 0) {
+		active = 0
+	} else if (active >= total) {
+		active = total - 1
+	}
+
+	this.active = active
+
+	// init all slides' state class
 	slides.slice(0, active).addClass(opts.classSlidePrev)
 	slides.eq(active).addClass(opts.classSlideActive)
 	slides.slice(active + 1).addClass(opts.classSlideNext)
 
+	// enable nav functions on demand
 	if (opts.scrollNav) this.enableScrollNav()
 	if (opts.keyNav) this.enableKeyNav()
 	if (opts.navBar) this.enableNavBar()
