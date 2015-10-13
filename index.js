@@ -32,13 +32,14 @@ var defaults = {
 	classSlideNavActive: 'slide-nav-active',
 
 	autoNav: false,
-	autoNavInterval: 5000
+	autoNavInterval: 5000,
+	autoNavPauseOnMouseenter: false
 }
 
 function Slider(options) {
 	var opts = this.opts = $.extend({}, defaults, options)
 	var $el = this.$el = $(opts.container)
-	var slides = this.slides = this.$el.children(opts.slide)
+	var slides = this.slides = this.$el.find(opts.slide)
 	var total = this.total = this.slides.length
 
 	// no slide
@@ -64,8 +65,7 @@ function Slider(options) {
 	if (opts.scrollNav) this.enableScrollNav()
 	if (opts.keyNav) this.enableKeyNav()
 	if (opts.navBar) this.enableNavBar()
-
-	if (opts.autoNav) this.startAutoNav()
+	if (opts.autoNav) this.enableAutoNav()
 }
 
 Slider.prototype.prev = function () {
@@ -182,17 +182,34 @@ Slider.prototype.enableNavBar = function () {
 	})
 }
 
+Slider.prototype.enableAutoNav = function () {
+	this.startAutoNav()
+	if (this.opts.autoNavPauseOnMouseenter) {
+		var self = this
+		this.$el.on('mouseenter', function () {
+			console.log('mouseenter stop auto nav')
+			self.stopAutoNav()
+		}).on('mouseleave', function () {
+			console.log('mouseleave start auto nav')
+			self.startAutoNav()
+		})
+	}
+}
+
 Slider.prototype.startAutoNav = function () {
 	if (this.autoNavTimer) return
 	var interval = Math.max(this.opts.autoNavInterval, this.opts.slideTime)
 	var self = this
-	autoNavTimer = setInterval(function () {
+	this.autoNavTimer = setInterval(function () {
 		self.nav(self.active + 1 >= self.total ? 0 : self.active + 1)
 	}, interval)
 }
 
 Slider.prototype.stopAutoNav = function () {
-	if (this.autoNavTimer) clearInterval(this.autoNavTimer)
+	if (this.autoNavTimer) {
+		clearInterval(this.autoNavTimer)
+		this.autoNavTimer = null
+	}
 }
 
 return Slider

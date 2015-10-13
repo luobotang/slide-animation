@@ -45,6 +45,7 @@ options 及缺省值：
 - classSlideNavActive: 'slide-nav-active'
 - autoNav: false
 - autoNavInterval: 5000
+- autoNavPauseOnMouseenter: false
 
 **prev()**
 
