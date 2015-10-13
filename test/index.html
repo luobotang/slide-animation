@@ -29,11 +29,27 @@
 		<div class="end">THE END</div>
 	</div>
 </div>
+<button id="btn-autonav">Start</button>
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../node_modules/jquery-mousewheel/jquery.mousewheel.js"></script>
 <script src="../index.js"></script>
 <script>
-new Slider({autoNav: true})
+$(function () {
+    var slider = new Slider({
+        autoNavInterval: 3000
+    })
+    var autonav = false
+    $('#btn-autonav').on('click', function () {
+        if (autonav) {
+            slider.stopAutoNav()
+            $(this).text('Start')
+        } else {
+            slider.startAutoNav()
+            $(this).text('Stop')
+        }
+        autonav = !autonav
+    })
+})
 </script>
 </body>
 </html>

@@ -108,3 +108,12 @@ p {
 .slide-active .end {
 	opacity: 1;
 }
+
+#btn-autonav {
+	position: fixed;
+	left: 30px;
+	bottom: 30px;
+	padding: 0 10px;
+	line-height: 30px;
+	border-radius: 5px;
+}
