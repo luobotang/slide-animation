@@ -21,7 +21,7 @@ new Slider({
 })
 ```
 
-## API
+## Methods
 
 **Slider([options])**
 
@@ -66,6 +66,26 @@ options 及缺省值：
 **stopAutoNav()**
 
 停止自动导航。
+
+**on(event, callback)**
+
+绑定事件。
+
+**off(event, callback)**
+
+解除事件绑定。
+
+## Events
+
+**beforeSlide**
+
+- {number} current
+- {number} target
+
+**slide**
+
+- {number} from
+- {number} current
 
 ## 依赖
 

@@ -49,6 +49,14 @@ $(function () {
         }
         autonav = !autonav
     })
+
+    slider.on('beforeSlide', function (e) {
+	    console.log(e)
+    })
+
+    slider.on('slide', function (e) {
+	    console.log(e)
+    })
 })
 </script>
 </body>

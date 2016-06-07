@@ -12,205 +12,301 @@
 
 })(function ($) {
 
-var defaults = {
-	container: '.slide-container',
-	slide: '.slide',
-	slideTime: 1000,
-	active: 0, // index start from 0
-	scrollNav: true,
-	keyNav: true,
-	navBar: true,
+	var KEY_LEFT = 37
+	var KEY_UP = 38
+	var KEY_RIGHT = 39
+	var KEY_DOWN = 40
 
-	classSlideIn: 'slide-in',
-	classSlideOut: 'slide-out',
-	classSlidePrev: 'slide-up',
-	classSlideNext: 'slide-down',
-	classSlideActive: 'slide-active',
+	var defaultOptions = {
+		container: '.slide-container',
+		slide: '.slide',
+		slideTime: 1000,
+		active: 0, // index start from 0
+		scrollNav: true,
+		keyNav: true,
+		navBar: true,
 
-	classSlideNavBar: 'slide-nav-bar',
-	classSlideNav: 'slide-nav',
-	classSlideNavActive: 'slide-nav-active',
+		classSlideIn: 'slide-in',
+		classSlideOut: 'slide-out',
+		classSlidePrev: 'slide-up',
+		classSlideNext: 'slide-down',
+		classSlideActive: 'slide-active',
 
-	autoNav: false,
-	autoNavInterval: 5000,
-	autoNavPauseOnMouseenter: false
-}
+		classSlideNavBar: 'slide-nav-bar',
+		classSlideNav: 'slide-nav',
+		classSlideNavActive: 'slide-nav-active',
 
-function Slider(options) {
-	var opts = this.opts = $.extend({}, defaults, options)
-	var $el = this.$el = $(opts.container)
-	var slides = this.slides = this.$el.find(opts.slide)
-	var total = this.total = this.slides.length
-
-	// no slide
-	if (total === 0) return
-
-	var active = opts.active
-
-	// check active
-	if (active < 0) {
-		active = 0
-	} else if (active >= total) {
-		active = total - 1
+		autoNav: false,
+		autoNavInterval: 5000,
+		autoNavPauseOnMouseenter: false
 	}
 
-	this.active = active
-
-	// init all slides' state class
-	slides.slice(0, active).addClass(opts.classSlidePrev)
-	slides.eq(active).addClass(opts.classSlideActive)
-	slides.slice(active + 1).addClass(opts.classSlideNext)
-
-	// enable nav functions on demand
-	if (opts.scrollNav) this.enableScrollNav()
-	if (opts.keyNav) this.enableKeyNav()
-	if (opts.navBar) this.enableNavBar()
-	if (opts.autoNav) this.enableAutoNav()
-}
-
-Slider.prototype.prev = function () {
-	this.nav(this.active - 1)
-}
-
-Slider.prototype.next = function () {
-	this.nav(this.active + 1)
-}
-
-/*
- * nav to the 'target' slide with given index
- * @param {number} target
- */
-Slider.prototype.nav = function (target) {
-	if (this.sliding ||
-		typeof target !== 'number' ||
-		target < 0 || target === this.active || target >= this.total) {
-		return
+	function EventEmitter() {
+		this._eventCallbacks = {}
 	}
 
-	var opts = this.opts
-	var self = this
-	var slideTime = this.opts.slideTime
+	$.extend(EventEmitter.prototype, {
 
-	var current = self.active
-	var isUp = target < current
+		on: function (event, callback) {
+			if (typeof callback === 'function') {
+				this._eventCallbacks[event] = this._eventCallbacks[event] || []
+				this._eventCallbacks[event].push(callback)
+			}
+		},
 
-	// current - between - target
-	var currentSlide = self.slides.eq(current)
-	var betweenSlides = isUp ? self.slides.slice(target, current) : self.slides.slice(current, target)
-	var targetSlide = self.slides.eq(target)
+		off: function (event, callback) {
+			var callbacks = this._eventCallbacks[event]
+			if (callbacks) {
+				var i = 0
+				var _callback
+				while ((_callback = callbacks[i])) {
+					if (_callback === callback) {
+						callbacks.splice(i, 1)
+					} else {
+						i++
+					}
+				}
+			}
+		},
 
-	self.sliding = true
-	self.active = target
-
-	var classSlideIn = opts.classSlideIn
-	var classSlideOut = opts.classSlideOut
-	var classSlidePrev = opts.classSlidePrev
-	var classSlideNext = opts.classSlideNext
-	var classSlideActive = opts.classSlideActive
-	var classSlideNavActive = opts.classSlideNavActive
-
-	currentSlide
-		.addClass(classSlideOut)
-		.addClass(isUp ? classSlideNext : classSlidePrev)
-		.removeClass(classSlideActive)
-	betweenSlides
-		.removeClass(isUp ? classSlidePrev : classSlideNext)
-		.addClass(isUp ? classSlideNext : classSlidePrev)
-	targetSlide
-		.addClass(classSlideIn)
-		.removeClass(isUp ? classSlidePrev : classSlideNext)
-		.addClass(classSlideActive)
-
-	if (self.navs) {
-		self.navs.eq(current).removeClass(classSlideNavActive)
-		self.navs.eq(target).addClass(classSlideNavActive)
-	}
-
-	setTimeout(function () {
-		self.sliding = false
-		currentSlide.removeClass(classSlideOut)
-		targetSlide.removeClass(classSlideIn)
-	}, slideTime)
-}
-
-
-Slider.prototype.enableScrollNav = function () {
-	var self = this
-	this.$el.mousewheel(function (e) {
-		var isUp = e.deltaY > 0
-		if (isUp) {
-			self.prev()
-		} else {
-			self.next()
+		trigger: function (event, args) {
+			var callbacks = this._eventCallbacks[event]
+			if (callbacks) {
+				var i = 0
+				var _callback
+				while ((_callback = callbacks[i++])) {
+					_callback.call(null, args)
+				}
+			}
 		}
 	})
-}
 
-var KEY_LEFT = 37
-var KEY_UP = 38
-var KEY_RIGHT = 39
-var KEY_DOWN = 40
+	function Slider(options) {
+		options = this.options = $.extend({}, defaultOptions, options)
+		this.$el = $(options.container)
+		this.initialize(options)
+	}
 
-Slider.prototype.enableKeyNav = function () {
-	var self = this
-	$(document).keydown(function (e) {
-		if (e.which === KEY_UP || e.which === KEY_LEFT) {
-			self.prev()
-		} else if (e.which === KEY_DOWN || e.which === KEY_RIGHT) {
-			self.next()
+	$.extend(Slider.prototype, {
+
+		initialize: function (options) {
+			var slides = this.slides = this.$el.find(options.slide)
+			var total = this.total = this.slides.length
+
+			this._event = new EventEmitter()
+
+			// no slide
+			if (total > 0) {
+
+				var active = options.active
+
+				// check active
+				if (active < 0) {
+					active = 0
+				} else if (active >= total) {
+					active = total - 1
+				}
+
+				this.active = active
+
+				// init all slides' state class
+				slides.slice(0, active).addClass(options.classSlidePrev)
+				slides.eq(active).addClass(options.classSlideActive)
+				slides.slice(active + 1).addClass(options.classSlideNext)
+
+				// enable nav functions on demand
+				if (options.scrollNav) {
+					this.enableScrollNav()
+				}
+				if (options.keyNav) {
+					this.enableKeyNav()
+				}
+				if (options.navBar) {
+					this.enableNavBar()
+				}
+				if (options.autoNav) {
+					this.enableAutoNav()
+				}
+			} else {
+				// do nothing
+			}
+		},
+
+		prev: function () {
+			this.nav(this.active - 1)
+		},
+
+		next: function () {
+			this.nav(this.active + 1)
+		},
+
+		/*
+		 * nav to the 'target' slide with given index
+		 * @param {number} target
+		 */
+		nav: function (target) {
+			if (this.sliding || typeof target !== 'number' ||
+				target < 0 || target === this.active || target >= this.total) {
+				return false
+			}
+
+			var current = this.active
+			var isUp = target < current
+
+			this.trigger('beforeSlide', {
+				current: current,
+				target: target
+			})
+
+			/*
+			 * e.g. direction: next to prev
+			 *
+			 * currnt state:
+			 * - currentSlide.classSlideActive
+			 * - betweenSlides.classSlideNext
+			 * - targetSlide.classSlideNext
+			 *
+			 * =>
+			 *
+			 * animation start:
+			 * - currentSlide.classSlideOut.classSlidePrev
+			 * - betweenSlides.classSlidePrev
+			 * - targetSlide.classSlideIn.classSlideActive
+			 *
+			 * =>
+			 *
+			 * animation stop:
+			 * - currentSlide.classSlidePrev
+			 * - betweenSlides.classSlidePrev
+			 * - targetSlide.classSlideActive
+			 */
+
+			var $currentSlide = this.slides.eq(current)
+			var $betweenSlides = isUp ?
+				this.slides.slice(target, current) :
+				this.slides.slice(current, target)
+			var $targetSlide = this.slides.eq(target)
+
+			this.sliding = true
+			this.active = target
+
+			var options = this.options
+
+			$currentSlide
+				.addClass(options.classSlideOut)
+				.addClass(isUp ? options.classSlideNext : options.classSlidePrev)
+				.removeClass(options.classSlideActive)
+			$betweenSlides
+				.removeClass(isUp ? options.classSlidePrev : options.classSlideNext)
+				.addClass(isUp ? options.classSlideNext : options.classSlidePrev)
+			$targetSlide
+				.addClass(options.classSlideIn)
+				.removeClass(isUp ? options.classSlidePrev : options.classSlideNext)
+				.addClass(options.classSlideActive)
+
+			if (this.navs) {
+				this.navs.eq(current).removeClass(options.classSlideNavActive)
+				this.navs.eq(target).addClass(options.classSlideNavActive)
+			}
+
+			setTimeout($.proxy(function () {
+				this.sliding = false
+				$currentSlide.removeClass(options.classSlideOut)
+				$targetSlide.removeClass(options.classSlideIn)
+
+				this.trigger('slide', {
+					from: current,
+					current: target
+				})
+			}, this), options.slideTime)
+		},
+
+
+		enableScrollNav: function () {
+			this.$el.mousewheel($.proxy(function (e) {
+				var isUp = e.deltaY > 0
+				if (isUp) {
+					this.prev()
+				} else {
+					this.next()
+				}
+			}, this))
+		},
+
+		enableKeyNav: function () {
+			$(document).keydown($.proxy(function (e) {
+				if (e.which === KEY_UP || e.which === KEY_LEFT) {
+					this.prev()
+				} else if (e.which === KEY_DOWN || e.which === KEY_RIGHT) {
+					this.next()
+				}
+			}, this))
+		},
+
+		enableNavBar: function () {
+			var options = this.options
+			var total = this.total
+			var $bar = $('<ul class="' + options.classSlideNavBar + '"></ul>')
+			for (var i = 0; i < total; i++) {
+				$bar.append('<li class="' + options.classSlideNav + '" data-index=' + i + '></li>')
+			}
+
+			$bar.appendTo(this.$el)
+
+			var navs = this.navs = $bar.find('li')
+			navs.eq(this.active).addClass(options.classSlideNavActive)
+
+			$bar.on('click', 'li', $.proxy(function (e) {
+				var index = e.currentTarget.getAttribute('data-index')
+				this.nav(parseInt(index, 10))
+			}, this))
+		},
+
+		enableAutoNav: function () {
+			this.startAutoNav()
+			if (this.options.autoNavPauseOnMouseenter) {
+				this.$el.on('hover', $.proxy(function () {
+					this.stopAutoNav()
+				}, this), $.proxy(function () {
+					this.startAutoNav()
+				}, this))
+			}
+		},
+
+		startAutoNav: function () {
+			if (this._autoNavTimer) {
+				return
+			} else {
+				var interval = Math.max(this.options.autoNavInterval, this.options.slideTime)
+				this._autoNavTimer = setInterval($.proxy(function () {
+					this.nav(this.active + 1 >= this.total ? 0 : this.active + 1)
+				}, this), interval)
+			}
+		},
+
+		stopAutoNav: function () {
+			if (this._autoNavTimer) {
+				clearInterval(this._autoNavTimer)
+				this._autoNavTimer = null
+			} else {
+				// do nothing
+			}
+		},
+
+		/* event api */
+
+		trigger: function (event, args) {
+			this._event.trigger(event, args)
+		},
+
+		on: function (event, callback) {
+			this._event.on(event, callback)
+		},
+
+		off: function (event, callback) {
+			this._event.off(event, callback)
 		}
 	})
-}
 
-Slider.prototype.enableNavBar = function () {
-	var opts = this.opts
-	var total = this.total
-	var $bar = $('<ul class="' + opts.classSlideNavBar + '"></ul>')
-	for (var i = 0; i < total; i++) {
-		$bar.append('<li class="' + opts.classSlideNav + '" data-index=' + i + '></li>')
-	}
-
-	$bar.appendTo(this.$el)
-
-	var navs = this.navs = $bar.find('li')
-	navs.eq(this.active).addClass(opts.classSlideNavActive)
-
-	var self = this
-	$bar.on('click', 'li', function (e) {
-		var index = e.currentTarget.getAttribute('data-index')
-		self.nav(parseInt(index, 10))
-	})
-}
-
-Slider.prototype.enableAutoNav = function () {
-	this.startAutoNav()
-	if (this.opts.autoNavPauseOnMouseenter) {
-		var self = this
-		this.$el.on('mouseenter', function () {
-			console.log('mouseenter stop auto nav')
-			self.stopAutoNav()
-		}).on('mouseleave', function () {
-			console.log('mouseleave start auto nav')
-			self.startAutoNav()
-		})
-	}
-}
-
-Slider.prototype.startAutoNav = function () {
-	if (this.autoNavTimer) return
-	var interval = Math.max(this.opts.autoNavInterval, this.opts.slideTime)
-	var self = this
-	this.autoNavTimer = setInterval(function () {
-		self.nav(self.active + 1 >= self.total ? 0 : self.active + 1)
-	}, interval)
-}
-
-Slider.prototype.stopAutoNav = function () {
-	if (this.autoNavTimer) {
-		clearInterval(this.autoNavTimer)
-		this.autoNavTimer = null
-	}
-}
-
-return Slider
+	return Slider
 })
