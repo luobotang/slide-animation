@@ -162,23 +162,23 @@
 			 * e.g. direction: next to prev
 			 *
 			 * currnt state:
-			 * - currentSlide.classSlideActive
-			 * - betweenSlides.classSlideNext
-			 * - targetSlide.classSlideNext
+			 * - currentSlide.SlideActive
+			 * - betweenSlides.SlideNext
+			 * - targetSlide.SlideNext
 			 *
 			 * =>
 			 *
 			 * animation start:
-			 * - currentSlide.classSlideOut.classSlidePrev
-			 * - betweenSlides.classSlidePrev
-			 * - targetSlide.classSlideIn.classSlideActive
+			 * - currentSlide.SlidePrev.SlideOut
+			 * - betweenSlides.SlidePrev
+			 * - targetSlide.SlideActive.SlideIn
 			 *
 			 * =>
 			 *
 			 * animation stop:
-			 * - currentSlide.classSlidePrev
-			 * - betweenSlides.classSlidePrev
-			 * - targetSlide.classSlideActive
+			 * - currentSlide.SlidePrev
+			 * - betweenSlides.SlidePrev
+			 * - targetSlide.SlideActive
 			 */
 
 			var $currentSlide = this.slides.eq(current)
